@@ -1,0 +1,37 @@
+---
+- name: Test connectivity to private instance and gather more data
+  hosts: private_hosts
+  become: yes
+  tasks:
+    - name: Ping the private instance
+      ansible.builtin.ping:
+
+    - name: Gather system information
+      ansible.builtin.setup:
+        filter: "*hostname*,*distribution*,*kernel*,*uptime*"
+
+    - name: Check uptime
+      ansible.builtin.command: uptime
+      register: uptime_output
+
+    - name: Display uptime
+      ansible.builtin.debug:
+        var: uptime_output.stdout
+
+    - name: Verify SSH connection
+      ansible.builtin.command: echo "SSH connection successful"
+      register: ssh_output
+
+    - name: Display SSH connection status
+      ansible.builtin.debug:
+        var: ssh_output.stdout
+
+    - name: Set hostname to "private"
+      ansible.builtin.hostname:
+        name: private
+
+    - name: Ensure hostname change persists across reboots
+      ansible.builtin.lineinfile:
+        path: /etc/hostname
+        line: "private"
+        create: yes
