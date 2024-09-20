@@ -150,9 +150,6 @@ resource "null_resource" "add_known_hosts" {
       for i in {1..10}; do
         ssh-keyscan -H ${aws_instance.jumpbox.public_ip} >> ~/.ssh/known_hosts && break || sleep 5
       done
-      for i in {1..10}; do
-        ssh-keyscan -H ${aws_instance.private_instance.public_ip} >> ~/.ssh/known_hosts && break || sleep 5
-      done
     EOT
   }
 
